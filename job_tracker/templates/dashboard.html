@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h3>{{ stats["total"] }}</h3>
+                <p class="text-muted mb-0">Total Applied</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm border-warning">
+            <div class="card-body">
+                <h3>{{ stats["interview"] }}</h3>
+                <p class="text-muted mb-0">Interviews</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm border-success">
+            <div class="card-body">
+                <h3>{{ stats["offer"] }}</h3>
+                <p class="text-muted mb-0">Offers</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm border-danger">
+            <div class="card-body">
+                <h3>{{ stats["rejected"] }}</h3>
+                <p class="text-muted mb-0">Rejected</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div class="btn-group">
+        <a href="/?status=all" class="btn btn-sm {{ 'btn-dark' if current_filter == 'all' else 'btn-outline-dark' }}">All</a>
+        <a href="/?status=applied" class="btn btn-sm {{ 'btn-secondary' if current_filter == 'applied' else 'btn-outline-secondary' }}">Applied</a>
+        <a href="/?status=interview" class="btn btn-sm {{ 'btn-warning' if current_filter == 'interview' else 'btn-outline-warning' }}">Interview</a>
+        <a href="/?status=offer" class="btn btn-sm {{ 'btn-success' if current_filter == 'offer' else 'btn-outline-success' }}">Offer</a>
+        <a href="/?status=rejected" class="btn btn-sm {{ 'btn-danger' if current_filter == 'rejected' else 'btn-outline-danger' }}">Rejected</a>
+    </div>
+    <a href="/add_application" class="btn btn-primary">+ Add Application</a>
+</div>
+
+{% if applications %}
+<div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Company</th>
+                <th>Role</th>
+                <th>Applied Date</th>
+                <th>Status</th>
+                <th>Notes</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in applications %}
+            <tr>
+                <td class="fw-semibold">{{ app["company_name"] }}</td>
+                <td>{{ app["role"] }}</td>
+                <td>{{ app["applied_date"] }}</td>
+                <td>
+                    <span class="badge
+                        {% if app['status'] == 'offer' %}bg-success
+                        {% elif app['status'] == 'interview' %}bg-warning text-dark
+                        {% elif app['status'] == 'rejected' %}bg-danger
+                        {% else %}bg-secondary{% endif %}">
+                        {{ app["status"] }}
+                    </span>
+                </td>
+                <td class="text-muted">{{ app["notes"] or "—" }}</td>
+                <td>
+                    <a href="/edit_application/{{ app['id'] }}" class="btn btn-outline-secondary btn-sm">Edit</a>
+                    <a href="/delete_application/{{ app['id'] }}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this application?')">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info text-center py-4">
+    <h5>No applications yet!</h5>
+    <p class="mb-0">Click <strong>+ Add Application</strong> to start tracking.</p>
+</div>
+{% endif %}
+
+{% endblock %}
